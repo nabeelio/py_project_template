@@ -11,7 +11,7 @@ from .lib.singleton import Singleton
 logging.basicConfig(format='%(asctime)s - '
                            '%(name)s:%(lineno)d - '
                            '%(levelname)s - %(message)s',
-                    level=logging.DEBUG)
+                    level=logging.INFO)
 
 LOG = logging.getLogger(__name__)
 
@@ -29,7 +29,7 @@ class App(object, metaclass=Singleton):
 
         parser = argparse.ArgumentParser()
         parser.add_argument('--conf', default='config.yml')
-        parser.add_argument('--log-level', default='DEBUG')
+        parser.add_argument('--log-level', default='INFO')
         parser.add_argument('--test-mode', default=False, action='store_true')
         self._args = parser.parse_args()
         return self._args
@@ -72,8 +72,13 @@ class App(object, metaclass=Singleton):
         return self._config
 
     def run(self):
+        """ application entry point """
         LOG.info(self.args)
         LOG.info(self.config)
+        
+        # set the proper log level
+        self.args.log_level = self.args.log_level.upper()
+        LOG.setLevel(getattr(logging, self.args.log_level))
 
 
 def main():
