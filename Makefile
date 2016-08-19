@@ -1,6 +1,9 @@
 #
-SYSTEM_PIP = pip3
-SYSTEM_VENV = virtualenv
+SYSTEM_PY3 = $(shell which python3)
+SYSTEM_PIP = $(shell which pip3)
+SYSTEM_VENV = $(shell which virtualenv)
+
+# for the local venv
 PIP = env/bin/pip
 PYT = env/bin/python
 
