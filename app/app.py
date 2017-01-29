@@ -6,12 +6,9 @@ import argparse
 from os import path
 from addict import Dict
 
+from .log import init
 from .lib.singleton import Singleton
 
-logging.basicConfig(format='%(asctime)s - '
-                           '%(name)s:%(lineno)d - '
-                           '%(levelname)s - %(message)s',
-                    level=logging.INFO)
 
 LOG = logging.getLogger(__name__)
 
@@ -73,9 +70,11 @@ class App(object, metaclass=Singleton):
 
     def run(self):
         """ application entry point """
+        init(self.args.log_level)
+
         LOG.info(self.args)
         LOG.info(self.config)
-        
+
         # set the proper log level
         self.args.log_level = self.args.log_level.upper()
         LOG.setLevel(getattr(logging, self.args.log_level))
