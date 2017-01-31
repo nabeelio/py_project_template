@@ -74,11 +74,7 @@ class App(object, metaclass=Singleton):
 
         LOG.info(self.args)
         LOG.info(self.config)
-
-        # set the proper log level
-        self.args.log_level = self.args.log_level.upper()
-        LOG.setLevel(getattr(logging, self.args.log_level))
-
+        
 
 def main():
     a = App()
