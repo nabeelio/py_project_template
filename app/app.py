@@ -14,6 +14,8 @@ LOG = logging.getLogger(__name__)
 
 
 class App(object, metaclass=Singleton):
+    
+    CONF_FORMAT = 'ini'
 
     def __init__(self):
         self._args = None
@@ -23,9 +25,14 @@ class App(object, metaclass=Singleton):
     def args(self):
         if self._args:
             return self._args
+        
+        if self.CONF_FORMAT == 'yaml':
+            default_conf = 'config.yaml'
+        elif self.CONF_FORMAT == 'ini':
+            default_conf = 'config.ini'
 
         parser = argparse.ArgumentParser()
-        parser.add_argument('--conf', default='config.yml')
+        parser.add_argument('--conf', default=default_conf)
         parser.add_argument('--log-level', default='INFO')
         parser.add_argument('--test-mode', default=False, action='store_true')
         self._args = parser.parse_args()
@@ -53,14 +60,19 @@ class App(object, metaclass=Singleton):
             dirs = path.split(dirs[0])
 
             try:
-                with open(fpath) as f:
-                    config = yaml.load(f)
-                    self._config = Dict(config)
-                    LOG.info('Config %s loaded' % fpath)
-                    break
-            except NotADirectoryError:
-                continue
-            except FileNotFoundError:
+                if self.CONF_FORMAT == 'yaml':
+                    with open(fpath) as f:
+                        config = yaml.load(f)
+                        self._config = Dict(config)
+                        LOG.info('Config %s loaded' % fpath)
+                        break
+                elif self.CONF_FORMAT == 'ini':
+                    self._config = configparser.ConfigParser(
+                        allow_no_value=True
+                    )
+
+                    self._config.read(self.args.conf)
+            except (NotADirectoryError, FileNotFoundError):
                 continue
             except Exception as e:
                 LOG.exception(e)
