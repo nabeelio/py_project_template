@@ -8,7 +8,7 @@ env.user = 'root'
 env.hosts = ['']
 env.key_filename = './deploy/deploy_key'
 
-CONTAINER_NAME = '{{ cookiecutter.package_name }}'
+CONTAINER_NAME = '{{cookiecutter.package_name}}'
 RUN_STRING = ('docker run '
               '-d '  # detached
               '--name ' + CONTAINER_NAME + ' '
@@ -37,6 +37,7 @@ def _get_python_exec(exe='python'):
     py = '{p}/versions/{cont}/bin/{exe}'.format(
         p=path, exe=exe, cont=CONTAINER_NAME
     )
+
     return py
 
 
@@ -47,6 +48,12 @@ def tests():
     local('docker run -it ' + CONTAINER_NAME + ' /bin/sh '
           '-c "cd /opt/' + CONTAINER_NAME + '; '
           '\$PYTHON_HOME/python -m unittest discover -s test/"')
+
+
+@task
+def version_bump():
+    # run('echo `git rev-parse --short HEAD`.%s > VERSION' % date.today())
+    local('bin/env/bumpversion minor VERSION')
 
 
 @task
@@ -146,9 +153,8 @@ def update(arg=None):
         with cd(os.getcwd()):
             run('git reset --hard')
             run('chmod 0600 deploy/deploy_key')
-            # run("git pull")
             run("ssh-agent bash -c 'ssh-add deploy/deploy_key; git pull'")
-            run('echo `git rev-parse --short HEAD`.%s > VERSION' % date.today())
+            run('fab version_bump')
 
     if arg in ('local', '', None):
         _local()
