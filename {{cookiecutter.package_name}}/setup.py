@@ -10,12 +10,12 @@ requires = (
     'loadconfig==0.1.1',
     'sortedcontainers==1.5.3',
     'requests==2.10.0',
-    'pytest==2.9.2',
+    'pytest==3.0.6',
     'pyyaml==3.11',
     'requests==2.10.0',
 )
 
-from {{ cookiecutter.package_name }} import \
+from {{cookiecutter.package_name}} import \
     __author__, \
     __version__
 

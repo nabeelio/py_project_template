@@ -42,12 +42,14 @@ def _get_python_exec(exe='python'):
 
 
 @task
-def tests():
+def tests(arg='local'):
     """ write the tests """
-    local("fab docker_build")
-    local('docker run -it ' + CONTAINER_NAME + ' /bin/sh '
-          '-c "cd /opt/' + CONTAINER_NAME + '; '
-          '\$PYTHON_HOME/python -m unittest discover -s test/"')
+    with cd(os.getcwd()):
+        if arg == 'local':
+            local('env/bin/py.test test/')
+        elif arg == 'docker':
+            local('fab docker:test')
+
 
 
 @task

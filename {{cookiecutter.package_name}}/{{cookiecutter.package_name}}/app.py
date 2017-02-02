@@ -6,8 +6,8 @@ import argparse
 from os import path
 from addict import Dict
 
-from .log import init
-from .lib.singleton import Singleton
+from {{cookiecutter.package_name}}.log import init
+from {{cookiecutter.package_name}}.lib.singleton import Singleton
 
 
 LOG = logging.getLogger(__name__)
@@ -17,25 +17,34 @@ class App(object, metaclass=Singleton):
     
     CONF_FORMAT = 'ini'
 
-    def __init__(self):
+    def __init__(self, args=None):
         self._args = None
         self._config = None
+        self._passed_args = args or {}
 
     @property
     def args(self):
         if self._args:
             return self._args
-        
+
         if self.CONF_FORMAT == 'yaml':
             default_conf = 'config.yaml'
         elif self.CONF_FORMAT == 'ini':
             default_conf = 'config.ini'
 
         parser = argparse.ArgumentParser()
+
         parser.add_argument('--conf', default=default_conf)
         parser.add_argument('--log-level', default='INFO')
-        parser.add_argument('--test-mode', default=False, action='store_true')
+        parser.add_argument('--test-mode', default=False,
+                            action='store_true')
+
         self._args = parser.parse_args()
+
+        if self._passed_args:
+            for key, value in self._passed_args.items():
+                setattr(self._args, key, value)
+
         return self._args
 
     @property
