@@ -16,7 +16,7 @@ requires = (
 )
 
 from {{ cookiecutter.package_name }} import \
-    __author__,
+    __author__, \
     __version__
 
 setup(name="{{ cookiecutter.package_name }}",

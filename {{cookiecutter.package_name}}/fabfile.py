@@ -51,9 +51,14 @@ def tests():
 
 
 @task
-def version_bump():
+def version_bump(part='patch'):
     # run('echo `git rev-parse --short HEAD`.%s > VERSION' % date.today())
-    local('bin/env/bumpversion minor VERSION')
+    if part not in ('major', 'minor', 'patch'):
+        print('Arg needs to be one of major, minor, patch')
+        exit(-1)
+        
+    local('env/bin/bumpversion %s VERSION' % part)
+    local('cat VERSION')
 
 
 @task
