@@ -8,7 +8,7 @@ env.user = 'root'
 env.hosts = ['']
 env.key_filename = './deploy/deploy_key'
 
-CONTAINER_NAME = os.path.relpath('.', '..')
+CONTAINER_NAME = '{{ cookiecutter.package_name }}'
 RUN_STRING = ('docker run '
               '-d '  # detached
               '--name ' + CONTAINER_NAME + ' '

@@ -1,0 +1,10 @@
+__pycache__/
+.idea/
+.tox/
+build/
+dist/
+env/
+footbot.egg-info/
+**/*.pyc
+**/*.iml
+**/.DS_Store
