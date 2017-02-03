@@ -23,7 +23,7 @@ class App(object, metaclass=Singleton):
         self._passed_args = args or {}
 
         log.init(self.args.log_level)
-        for logger, log_level in self.conf.items('logging'):
+        for logger, log_level in self.conf.logging.items():
             tmp_logger = logging.getLogger(logger)
             tmp_logger.setLevel(getattr(logging, log_level))
 
