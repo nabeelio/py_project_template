@@ -1,12 +1,12 @@
 #
+import os
 import sys
 import yaml
 import logging
 import argparse
-from os import path
 from addict import Dict
 
-from {{cookiecutter.package_name}}.log import init
+from {{cookiecutter.package_name}} import log
 from {{cookiecutter.package_name}}.lib.singleton import Singleton
 
 
@@ -14,22 +14,27 @@ LOG = logging.getLogger(__name__)
 
 
 class App(object, metaclass=Singleton):
-    
-    CONF_FORMAT = 'ini'
 
     def __init__(self, args=None):
+        """ """
         self._args = None
         self._config = None
+        self._conf_format = 'ini'
         self._passed_args = args or {}
+
+        log.init(self.args.log_level)
+        for logger, log_level in self.conf.items('logging'):
+            tmp_logger = logging.getLogger(logger)
+            tmp_logger.setLevel(getattr(logging, log_level))
 
     @property
     def args(self):
         if self._args:
             return self._args
 
-        if self.CONF_FORMAT == 'yaml':
+        if self._conf_format == 'yaml':
             default_conf = 'config.yaml'
-        elif self.CONF_FORMAT == 'ini':
+        elif self._conf_format == 'ini':
             default_conf = 'config.ini'
 
         parser = argparse.ArgumentParser()
@@ -48,54 +53,65 @@ class App(object, metaclass=Singleton):
         return self._args
 
     @property
-    def config(self):
+    def conf(self):
         """
         :rtype: dict
         """
         if self._config:
             return self._config
 
+        config_text = ''
         file = self.args.conf
         LOG.info('Looking for %s' % file)
 
         # search each directory going up one dir at a time
-        dirs = path.split(path.abspath(__file__))
-        dirs = path.split(dirs[0])
+        dirs = os.path.split(os.path.abspath(__file__))
+        dirs = os.path.split(dirs[0])
+
         while dirs:
             if dirs[0] == '/' and not dirs[1]:
                 break
 
             fpath = '/'.join(dirs) + '/' + file
-            dirs = path.split(dirs[0])
+            dirs = os.path.split(dirs[0])
 
             try:
-                if self.CONF_FORMAT == 'yaml':
-                    with open(fpath) as f:
-                        config = yaml.load(f)
-                        self._config = Dict(config)
-                        LOG.info('Config %s loaded' % fpath)
-                        break
-                elif self.CONF_FORMAT == 'ini':
-                    self._config = configparser.ConfigParser(
-                        allow_no_value=True
-                    )
+                if not os.path.exists(fpath):
+                    continue
 
-                    self._config.read(self.args.conf)
+                with open(fpath, 'r') as f:
+                    config_text = f.read()
+
+                break
             except (NotADirectoryError, FileNotFoundError):
                 continue
             except Exception as e:
                 LOG.exception(e)
                 exit(-1)
 
+        LOG.info('Config loaded from %s' % fpath)
+
+        # look for ${HOME}, etc and expand it
+        config_text = os.path.expandvars(config_text)
+
+        if self.CONF_FORMAT == 'yaml':
+            config = yaml.load(config_text)
+            self._config = Dict(config)
+        elif self.CONF_FORMAT == 'ini':
+            conf = configparser.ConfigParser(
+                allow_no_value=True
+            )
+
+            conf.read_string(config_text)
+            self._config = Dict(conf._sections)
+
         return self._config
 
     def run(self):
         """ application entry point """
-        init(self.args.log_level)
-
         LOG.info(self.args)
-        LOG.info(self.config)
-        
+        LOG.info(self.conf)
+
 
 def main():
     a = App()
