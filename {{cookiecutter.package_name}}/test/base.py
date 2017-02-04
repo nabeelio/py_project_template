@@ -1,7 +1,7 @@
 #
 import unittest
 
-from {{ cookiecutter.package_name }}.app import App
+from {{cookiecutter.package_name}}.app import App
 
 class TestBase(unittest.TestCase):
     def setUp(self):
