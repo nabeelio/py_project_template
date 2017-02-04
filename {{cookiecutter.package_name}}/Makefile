@@ -34,4 +34,7 @@ clean:
 	rm -rf *.egg-info
 	rm *.xml
 
-.PHONY : help install venv deps clean
+docker-up:
+	docker-compose up --build
+
+.PHONY : help install venv deps clean docker-up

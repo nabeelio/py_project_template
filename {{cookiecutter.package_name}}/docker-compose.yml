@@ -1,0 +1,6 @@
+version: '1'
+services:
+  {{cookiecutter.package_name}}:
+    build: .
+    volumes:
+     - .:/opt/{{cookiecutter.package_name}}

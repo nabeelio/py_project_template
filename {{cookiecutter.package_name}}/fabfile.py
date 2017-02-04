@@ -119,10 +119,10 @@ def docker(arg):
     def _start():
         _build()
         with settings(warn_only=True):
-            run('docker stop ' + CONTAINER_NAME)
-            run('docker rm -f ' + CONTAINER_NAME)
+            local('docker stop ' + CONTAINER_NAME)
+            local('docker rm -f ' + CONTAINER_NAME)
 
-        run(RUN_STRING)
+        local(RUN_STRING)
 
     def _run():
         local('docker run -it ' + CONTAINER_NAME)
@@ -158,10 +158,10 @@ def update(arg=None):
     """ """
     def _local():
         with cd(os.getcwd()):
-            run('git reset --hard')
-            run('chmod 0600 deploy/deploy_key')
-            run("ssh-agent bash -c 'ssh-add deploy/deploy_key; git pull'")
-            run('fab version_bump')
+            local('git reset --hard')
+            local('chmod 0600 deploy/deploy_key')
+            local("ssh-agent bash -c 'ssh-add deploy/deploy_key; git pull'")
+            local('fab version_bump')
 
     if arg in ('local', '', None):
         _local()
