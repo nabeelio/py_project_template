@@ -198,7 +198,8 @@ class FatalLogger(LimitLogger):
         if FatalLogger.errors_fatal:
             raise RuntimeError('Error encountered')
 
-logging.setLoggerClass(FatalLogger)
+# logging.setLoggerClass(FatalLogger)
+logging.setLoggerClass(logging.Logger)
 
 
 def supports_color():
