@@ -4,17 +4,15 @@ from sys import platform
 from fabric.api import *
 from datetime import date
 
-env.user = 'root'
-env.hosts = ['']
-env.key_filename = './deploy/deploy_key'
 
 CONTAINER_NAME = '{{cookiecutter.package_name}}'
-RUN_STRING = ('docker run '
-              '-d '  # detached
-              '--name ' + CONTAINER_NAME + ' '
-              '--restart on-failure '
-              '-t ' + CONTAINER_NAME + ' '
-              '/usr/bin/chaperone')
+RUN_STRING = ' '.join([
+    'docker run',
+    '-d',
+    '--name ' + CONTAINER_NAME,
+    '--restart always',
+    '-t ' + CONTAINER_NAME
+])
 
 
 def _cmd(*args):
@@ -23,11 +21,11 @@ def _cmd(*args):
 
 def _get_pyenv_exec():
     """ get an abs path to pyenv, or just return sys """
-    path = os.path.expanduser('~/.pyenv/bin/pyenv')
-    if os.path.exists(path):
-        return path
+    env_path = os.path.expanduser('~/.pyenv/bin/pyenv')
+    if os.path.exists(env_path):
+        return env_path
 
-    return 'pyenv'
+    return 'pyenv'  # global?
 
 
 def _get_python_exec(exe='python'):

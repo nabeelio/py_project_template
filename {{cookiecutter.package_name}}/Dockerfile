@@ -11,6 +11,7 @@ FROM nabeelio/alpine-py:latest
 MAINTAINER Nabeel Shahzad <hi@nabs.io>
 
 ENV APP_HOME /opt/{{cookiecutter.package_name}}
+ENV PATH "/opt/{{cookiecutter.package_name}}/env/bin:$PATH"
 
 COPY scripts/chaperone.conf /etc/chaperone.d/chaperone.conf
 
@@ -21,4 +22,3 @@ WORKDIR $APP_HOME
 RUN pip install -r requirements.txt
 
 CMD /usr/bin/chaperone --force
-
