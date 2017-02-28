@@ -55,14 +55,17 @@ class BaseFormatter(logging.Formatter):
 
 
 class ANSIFormatter(BaseFormatter):
+    
     ANSI_CODES = {
         'red': '\033[1;31m',
         'yellow': '\033[1;33m',
         'cyan': '\033[1;36m',
+        'green': '\033[1;32m',
         'white': '\033[1;37m',
         'bgred': '\033[1;41m',
         'bggrey': '\033[1;100m',
-        'reset': '\033[0;m'}
+        'reset': '\033[0;m',
+    }
 
     LEVEL_COLORS = {
         'INFO': 'cyan',
@@ -70,6 +73,16 @@ class ANSIFormatter(BaseFormatter):
         'ERROR': 'red',
         'CRITICAL': 'bgred',
         'DEBUG': 'bggrey'}
+
+    @staticmethod
+    def colorize(color, text):
+        """ """
+        if not supports_color():
+            return text
+
+        color = ANSIFormatter.ANSI_CODES[color]
+        fmt = '{0}{1}{2}'
+        return fmt.format(color, text, ANSIFormatter.ANSI_CODES['reset'])
 
     def _get_levelname(self, name):
         color = self.ANSI_CODES[self.LEVEL_COLORS.get(name, 'white')]
