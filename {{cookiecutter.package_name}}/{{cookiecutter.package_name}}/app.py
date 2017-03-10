@@ -1,9 +1,9 @@
 #
 import os
-import sys
 import yaml
 import logging
 import argparse
+import configparser
 from addict import Dict
 
 from {{cookiecutter.package_name}} import log
@@ -33,9 +33,9 @@ class App(object, metaclass=Singleton):
             return self._args
 
         if self._conf_format == 'yaml':
-            default_conf = 'config.yaml'
+            default_conf = 'conf.yaml'
         elif self._conf_format == 'ini':
-            default_conf = 'config.ini'
+            default_conf = 'conf.ini'
 
         parser = argparse.ArgumentParser()
 
@@ -94,10 +94,10 @@ class App(object, metaclass=Singleton):
         # look for ${HOME}, etc and expand it
         config_text = os.path.expandvars(config_text)
 
-        if self.CONF_FORMAT == 'yaml':
+        if self._conf_format == 'yaml':
             config = yaml.load(config_text)
             self._config = Dict(config)
-        elif self.CONF_FORMAT == 'ini':
+        elif self._conf_format == 'ini':
             conf = configparser.ConfigParser(
                 allow_no_value=True
             )
