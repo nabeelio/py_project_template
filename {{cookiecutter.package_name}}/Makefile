@@ -19,7 +19,7 @@ venv:
 	rm -rf env
 	$(SYSTEM_PIP) install --upgrade pip
 	$(SYSTEM_PIP) install --upgrade virtualenv
-	$(SYSTEM_VENV) --python=$(PY3) env
+	$(SYSTEM_VENV) --python=$(SYSTEM_PY3) env
 
 	$(PIP) install --upgrade pip
 
