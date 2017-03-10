@@ -12,4 +12,10 @@ class TestAppBase(TestBase):
         from addict import Dict
         assert isinstance(self.app.conf, Dict)
 
+    def test_redis(self):
+        from {{cookiecutter.package_name}}.lib.redis import Redis
 
+        with Redis(force_mock=True) as redis:
+            redis.set('key', 'value')
+            val = redis.get('key').decode('utf-8')
+            assert val == 'value'

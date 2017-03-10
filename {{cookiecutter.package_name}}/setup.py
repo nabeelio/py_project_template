@@ -8,10 +8,12 @@ requires = (
     'bumpversion==0.5.3',
     'jinja2==2.8',
     'loadconfig==0.1.1',
+    'mockredispy==2.9.3',
     'sortedcontainers==1.5.3',
     'requests==2.10.0',
     'pytest==3.0.6',
     'pyyaml==3.11',
+    'redis==2.10.5',
     'requests==2.10.0',
 )
 
